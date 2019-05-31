@@ -1,0 +1,53 @@
+global
+    #
+    log         127.0.0.1 local2
+
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+#
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+#
+frontend http-balancer
+    bind *:80
+    default_backend web-servers
+#
+backend web-servers
+    mode http
+    balance roundrobin
+    server  {{ hostname_apache1 }} {{ ip_apache1 }}:{{ apache1_port }} check
+    server  {{ hostname_apache2 }} {{ ip_apache2 }}:{{ apache2_port }} check
+
+listen stats 0.0.0.0:9000       #Listen on all IP's on port 9000
+    mode http
+    balance
+    timeout client 5000
+    timeout connect 4000
+    timeout server 30000
+
+    stats uri /haproxy_stats        
+    stats realm HAProxy\ Statistics 
+    stats auth admin:redhat
+    stats admin if TRUE

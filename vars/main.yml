@@ -1,0 +1,9 @@
+---
+# vars file for haproxy
+hostname_apache1: apache1
+ip_apache1: 192.168.100.20
+apache1_port: 80
+
+hostname_apache2: apache2
+ip_apache2: 192.168.100.21
+apache2_port: 80

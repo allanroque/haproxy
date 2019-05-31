@@ -1,0 +1,27 @@
+---
+# tasks file for haproxy
+
+- name: Install haproxy pkg
+  yum:
+    name:
+      - haproxy
+      - rsyslog
+    state: present
+
+- name: Adjust rsyslog file
+  copy:
+    src: rsyslog.conf
+    dest: /etc/rsyslog.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart rsyslog
+
+- name: Copy haproxy.cfg
+  template:
+    src: haproxy.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart haproxy

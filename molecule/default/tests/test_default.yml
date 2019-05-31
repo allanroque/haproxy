@@ -1,0 +1,25 @@
+# Molecule managed
+---
+file:
+  /etc/haproxy/haproxy.cfg:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    filetype: file
+    contains: []
+package:
+  haproxy:
+    installed: true
+    versions:
+    - 1.5.18
+port:
+  tcp:80:
+    listening: true
+    ip:
+    - 0.0.0.0
+service:
+  haproxy:
+    enabled: true
+    running: true
+

@@ -1,0 +1,40 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: my_server
+    hostname: webserver-test
+    image: registry.access.redhat.com/rhel7
+    privileged: true
+    command: "/usr/sbin/init"
+provisioner:
+  name: ansible
+  log: true
+  lint:
+    name: ansible-lint
+scenario:
+  name: default
+  test_sequence:
+#    - lint
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+verifier:
+  name: goss
+  enabled: true
+  lint:
+    name: yamllint
+
